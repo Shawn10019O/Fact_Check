@@ -1,0 +1,13 @@
+python-pptx 
+PyPDF2 
+openai 
+google-api-python-client
+black
+python-dotenv
+tenacity
+fastapi 
+uvicorn 
+slack-bolt[asyncio]
+aiohttp
+pyngrok
+pdf2image
