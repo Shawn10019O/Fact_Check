@@ -3,10 +3,10 @@ from pathlib import Path
 from typing import List
 from pptx import Presentation
 from typing import List
-from models import SlideResult
-from slides import extract_slides , sanitize, get_topic_hint
-from llm import bullets_to_paragraph, get_verdict,extract_correct_sentences
-from search import enrich_and_filter
+from core.models import SlideResult
+from core.slides import extract_slides , sanitize, get_topic_hint
+from core.llm import bullets_to_paragraph, get_verdict,extract_correct_sentences
+from core.search import enrich_and_filter
 
 
 async def process_file(path: Path, llm_model: str) -> List[SlideResult]:

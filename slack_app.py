@@ -13,7 +13,7 @@ import nest_asyncio
 import threading
 from dotenv import load_dotenv
 import time
-from core.models import results_to_json
+from core.models import results_to_markdown
 from core.models import SlideResult
 from core.process import process_file
 
@@ -49,19 +49,17 @@ async def on_file_shared(body, client: AsyncWebClient, logger):
     tmp.write(data)
     tmp.close()
 
-    results: list[SlideResult] = await process_file(Path(tmp.name), llm_model="gpt-3.5-turbo")
+    results: list[SlideResult] = await process_file(Path(tmp.name), llm_model="gpt-4o")
     blocks = build_blocks(results)
 
     await client.chat_postMessage(channel=channel, blocks=blocks, text="Fact-check report")
 
 
-
-
 def build_blocks(results: list[SlideResult]) -> list[dict]:
-    json_text = results_to_json(results)
+    md = results_to_markdown(results)
     return [{
         "type": "section",
-        "text": {"type": "mrkdwn", "text": f"```json\n{json_text}\n```"}
+        "text": {"type": "mrkdwn", "text": md}
     }]
 
 
