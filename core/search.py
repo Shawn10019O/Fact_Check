@@ -8,7 +8,7 @@ import numpy as np
 import aiohttp 
 import asyncio
 import hashlib
-from models import SuspiciousClaim
+from core.models import SuspiciousClaim
 
 
 load_dotenv() 
