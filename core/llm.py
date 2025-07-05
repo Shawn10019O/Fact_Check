@@ -45,11 +45,14 @@ async def bullets_to_paragraph(text: str, model: str) -> str:
         {"role": "user", "content": text},
     ]
 
-    rsp = await client.chat.completions.create(
-        model=model,
-        temperature=0,
-        messages=msgs,
-    )
+    try:
+        rsp = await client.chat.completions.create(
+            model=model,
+            temperature=0,
+            messages=msgs,
+        )
+    except Exception as err:          
+        return "ERROR", str(err)
 
     raw_msg: str | None = rsp.choices[0].message.content
     return "" if raw_msg is None else raw_msg.strip()
@@ -62,11 +65,14 @@ async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
         {"role": "user", "content": paragraph},
     ]
 
-    rsp = await client.chat.completions.create(
-        model=model,
-        temperature=0,
-        messages=msgs,
-    )
+    try:
+        rsp = await client.chat.completions.create(
+            model=model,
+            temperature=0,
+            messages=msgs,
+        )
+    except Exception as err:          
+        return "ERROR", str(err)
 
     raw_msg: str | None = rsp.choices[0].message.content
     if raw_msg is None:
