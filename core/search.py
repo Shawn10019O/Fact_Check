@@ -22,10 +22,10 @@ _cache = {}
 if CACHE_DB.exists():
     _cache = json.loads(CACHE_DB.read_text())
 
-def _key(q):
+def _key(q: str) -> str:
     return hashlib.sha256(q.encode()).hexdigest()
 
-def save_cache():
+def save_cache() -> None:
     CACHE_DB.write_text(json.dumps(_cache, ensure_ascii=False, indent=2))
 
 async def google_search(query: str, num: int = 5) -> List[Dict[str, str]]:
@@ -34,7 +34,7 @@ async def google_search(query: str, num: int = 5) -> List[Dict[str, str]]:
         return _cache[k]
 
     url = "https://www.googleapis.com/customsearch/v1"
-    params = {"key": GOOGLE_API_KEY, "cx": CUSTOM_SEARCH_ENGINE_ID, "q": query, "num": num}
+    params: dict[str, str] = {"key": GOOGLE_API_KEY, "cx": CUSTOM_SEARCH_ENGINE_ID, "q": query, "num": str(num)}
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as sess:
         async with sess.get(url, params=params) as resp:
             data = await resp.json()

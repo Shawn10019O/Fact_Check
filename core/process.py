@@ -11,7 +11,7 @@ from core.search import enrich_and_filter
 async def process_file(path: Path, llm_model: str) -> List[SlideResult]:
     raw_slides = extract_slides(path)
     is_pptx = path.suffix.lower() == ".pptx"
-    prs = Presentation(path) if is_pptx else None
+    prs = Presentation(str(path)) if is_pptx else None
     results: List[SlideResult] = []
 
     for idx, raw in enumerate(raw_slides, 1):
@@ -22,7 +22,8 @@ async def process_file(path: Path, llm_model: str) -> List[SlideResult]:
         paragraph = await bullets_to_paragraph(cleaned, llm_model)
         verdict, rationale = await get_verdict(paragraph, llm_model)
 
-        hint = get_topic_hint(paragraph, is_pptx, prs.slides[idx-1] if is_pptx else None)
+        slide_obj = prs.slides[idx - 1] if is_pptx and prs is not None else None
+        hint = get_topic_hint(paragraph, is_pptx, slide_obj)
 
         supported_sents = await extract_correct_sentences(
             paragraph,        

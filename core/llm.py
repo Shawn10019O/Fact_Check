@@ -43,7 +43,7 @@ async def bullets_to_paragraph(text: str, model: str) -> str:
     rsp = await client.chat.completions.create(
         model=model,
         temperature=0,
-        messages=[BULLET_SYS_MSG, {"role": "user", "content": text}], # type: ignore[arg-type]
+        messages=[BULLET_SYS_MSG, {"role": "user", "content": text}],# type: ignore[arg-type]
     )
     return rsp.choices[0].message.content.strip()
 
@@ -52,7 +52,7 @@ async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
     rsp = await client.chat.completions.create(
         model=model,
         temperature=0,
-        messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}], # type: ignore[arg-type]
+        messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}],# type: ignore[arg-type]
     )
     raw = rsp.choices[0].message.content.strip()
     if ":" in raw:
