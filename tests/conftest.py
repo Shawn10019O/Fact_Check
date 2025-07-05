@@ -21,15 +21,15 @@ class _FakeChat:
         )
 
 class _FakeEmbeddings:
-    async def create(self, **kwargs):
-        # 返り値の形だけ合わせる（距離計算は使わないので 0 ベクトルで可）
-        data = [types.SimpleNamespace(embedding=[0.0] * 5) for _ in kwargs["input"]]
+    async def create(self, *, input, model):
+        vec = [1.0, 0.0, 0.0]                       
+        data = [types.SimpleNamespace(embedding=vec) for _ in input]
         return types.SimpleNamespace(data=data)
 
 class _FakeOpenAI:
     def __init__(self):
-        self.chat = types.SimpleNamespace(completions=_FakeChat())
-        self.embeddings = _FakeEmbeddings()
+        self.chat       = types.SimpleNamespace(completions=_FakeChat())
+        self.embeddings = _FakeEmbeddings()  
 
 @pytest.fixture(autouse=True)
 def _patch_openai(monkeypatch):
