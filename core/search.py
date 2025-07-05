@@ -8,7 +8,7 @@ import numpy as np
 import aiohttp 
 import asyncio
 import hashlib
-from typing import Dict
+from typing import Dict, Optional,cast
 from core.models import SuspiciousClaim
 
 
@@ -18,7 +18,7 @@ CUSTOM_SEARCH_ENGINE_ID = os.getenv("CUSTOM_SEARCH_ENGINE_ID")
 CACHE_DB = Path(".gsearch_cache.json")
 client = AsyncOpenAI()
 
-_cache = {}
+_cache: dict[str, list[dict[str, str]]] = {}
 if CACHE_DB.exists():
     _cache = json.loads(CACHE_DB.read_text())
 
@@ -31,7 +31,7 @@ def save_cache() -> None:
 async def google_search(query: str, num: int = 5) -> list[Dict[str, str]]:
     k = _key(query)
     if k in _cache:
-        return _cache[k]
+        return cast(list[dict[str, str]], _cache[k]) 
 
     url = "https://www.googleapis.com/customsearch/v1"
     params: dict[str, str] = {
@@ -68,7 +68,7 @@ async def fetch_and_filter_snippets(claim: str, k: int = 5) -> list[dict[str, st
     return evidences
 
 async def enrich_and_filter(sentences: list[str], topic_hint: str | None = None) -> list[SuspiciousClaim]:
-    async def enrich(sent:str):
+    async def enrich(sent: str) -> Optional[SuspiciousClaim]:
         query = f"{topic_hint}: {sent}" if topic_hint else sent
         evids = await fetch_and_filter_snippets(query)
         if not evids:      # 証拠ゼロ ⇒ suspicious

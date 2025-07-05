@@ -4,7 +4,7 @@ from pathlib import Path
 # 3rd‑party parsing libs
 from pptx import Presentation
 import PyPDF2
-from typing import Optional
+from typing import Optional,Any
 
 
 # ファイルからスライドまたはページのテキストを抽出
@@ -31,7 +31,7 @@ def _extract_pptx(path: Path) -> list[str]:
 
 
 def _extract_pdf(path: Path) -> list[str]:
-    reader = PyPDF2.PdfReader(path)
+    reader = PyPDF2.PdfReader(str(path)) 
     out: list[str] = []
     for page in reader.pages:
         txt = page.extract_text() or ""
@@ -47,10 +47,10 @@ def sanitize(text: str) -> str:
     return text.strip("。 ")
 
 # スライドの主題を1語で取得
-def get_topic_hint(raw_slide: str, is_pptx: bool, slide_obj=None) -> Optional[str]:
+def get_topic_hint(raw_slide: str, is_pptx: bool, slide_obj: Any | None = None) -> Optional[str]:
     if is_pptx and slide_obj and getattr(slide_obj.shapes, "title", None):
         return slide_obj.shapes.title.text.strip()
     # fallback: 最初の「。」まで
-    first_sentence = re.split(r"(?<=。)", raw_slide, maxsplit=1)[0].strip()
+    first_sentence: str = re.split(r"(?<=。)", raw_slide, maxsplit=1)[0].strip()
     print(first_sentence)
     return first_sentence[:10] 
