@@ -58,7 +58,7 @@ async def bullets_to_paragraph(text: str, model: str) -> str:
 # 段落の真偽判定を取得
 async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
     try:
-        rsp = await client.chat.completions.create(
+        rsp = await client.chat.completions.create(# type: ignore[list-item]
             model=model,
             temperature=0,
             messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}], 
