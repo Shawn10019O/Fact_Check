@@ -33,7 +33,8 @@ class _FakeOpenAI:
 
 @pytest.fixture(autouse=True)
 def _patch_openai(monkeypatch):
-    import core.llm as llm, core.search as search
+    import core.llm as llm
+    import core.search as search
     dummy = _FakeOpenAI()
     # llm 側
     monkeypatch.setattr(llm,    "client", dummy, raising=False)
