@@ -11,3 +11,4 @@ slack-bolt[asyncio]
 aiohttp
 pyngrok
 pdf2image
+numpy
