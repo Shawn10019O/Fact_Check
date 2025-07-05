@@ -8,7 +8,7 @@ import numpy as np
 import aiohttp 
 import asyncio
 import hashlib
-from typing import Dict, List
+from typing import Dict
 from core.models import SuspiciousClaim
 
 
@@ -28,13 +28,18 @@ def _key(q: str) -> str:
 def save_cache() -> None:
     CACHE_DB.write_text(json.dumps(_cache, ensure_ascii=False, indent=2))
 
-async def google_search(query: str, num: int = 5) -> List[Dict[str, str]]:
+async def google_search(query: str, num: int = 5) -> list[Dict[str, str]]:
     k = _key(query)
     if k in _cache:
         return _cache[k]
 
     url = "https://www.googleapis.com/customsearch/v1"
-    params: dict[str, str] = {"key": GOOGLE_API_KEY, "cx": CUSTOM_SEARCH_ENGINE_ID, "q": query, "num": str(num)}
+    params: dict[str, str] = {
+    "key": GOOGLE_API_KEY or "",
+    "cx": CUSTOM_SEARCH_ENGINE_ID or "",
+    "q": query,
+    "num": str(num),
+    }
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as sess:
         async with sess.get(url, params=params) as resp:
             data = await resp.json()
@@ -42,7 +47,7 @@ async def google_search(query: str, num: int = 5) -> List[Dict[str, str]]:
             _cache[k] = items
             return items
         
-async def fetch_and_filter_snippets(claim: str, k: int = 5) -> List[Dict[str, str]]:
+async def fetch_and_filter_snippets(claim: str, k: int = 5) -> list[Dict[str, str]]:
     items = await google_search(claim)
     snippets = [
         {"url": it["link"], "snippet": it["snippet"]}
@@ -62,7 +67,7 @@ async def fetch_and_filter_snippets(claim: str, k: int = 5) -> List[Dict[str, st
     ]
     return evidences
 
-async def enrich_and_filter(sentences: list[str],topic_hint: str | None = None,) -> list[SuspiciousClaim]:
+async def enrich_and_filter(sentences: list[str], topic_hint: str | None = None) -> list[SuspiciousClaim]:
     async def enrich(sent:str):
         query = f"{topic_hint}: {sent}" if topic_hint else sent
         evids = await fetch_and_filter_snippets(query)

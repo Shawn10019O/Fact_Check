@@ -1,7 +1,6 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from typing import List
 # 3rd‑party parsing libs
 from pptx import Presentation
 import PyPDF2
@@ -9,7 +8,7 @@ from typing import Optional
 
 
 # ファイルからスライドまたはページのテキストを抽出
-def extract_slides(path: Path) -> List[str]:
+def extract_slides(path: Path) -> list[str]:
     """Return list[str] where index == slide number‑1."""
     ext = path.suffix.lower()
     if ext == ".pptx":
@@ -19,11 +18,11 @@ def extract_slides(path: Path) -> List[str]:
     raise ValueError(f"Unsupported file type: {ext}")
 
 
-def _extract_pptx(path: Path) -> List[str]:
+def _extract_pptx(path: Path) -> list[str]:
     prs = Presentation(str(path))  # mypy: Path→str
-    out: List[str] = []
+    out: list[str] = []
     for slide in prs.slides:
-        parts: List[str] = []
+        parts: list[str] = []
         for shape in slide.shapes:
             if hasattr(shape, "text") and shape.text:
                 parts.append(shape.text)
@@ -31,9 +30,9 @@ def _extract_pptx(path: Path) -> List[str]:
     return out
 
 
-def _extract_pdf(path: Path) -> List[str]:
+def _extract_pdf(path: Path) -> list[str]:
     reader = PyPDF2.PdfReader(path)
-    out: List[str] = []
+    out: list[str] = []
     for page in reader.pages:
         txt = page.extract_text() or ""
         out.append(txt)

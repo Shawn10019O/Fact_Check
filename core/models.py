@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 @dataclass
 class SuspiciousClaim:
@@ -15,7 +14,7 @@ class SlideResult:
     suspicious_claims: list[SuspiciousClaim] = field(default_factory=list)
 
 
-def results_to_markdown(results: List[SlideResult]) -> str:
+def results_to_markdown(results: list[SlideResult]) -> str:
     """
     SlideResult 一覧を Slack の mrkdwn で読みやすく整形。
     """

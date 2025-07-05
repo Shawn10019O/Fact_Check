@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pathlib import Path
-from typing import List
 from pptx import Presentation
 from core.models import SlideResult
 from core.slides import extract_slides , sanitize, get_topic_hint
@@ -8,11 +7,11 @@ from core.llm import bullets_to_paragraph, get_verdict,extract_correct_sentences
 from core.search import enrich_and_filter
 
 
-async def process_file(path: Path, llm_model: str) -> List[SlideResult]:
+async def process_file(path: Path, llm_model: str) -> list[SlideResult]:
     raw_slides = extract_slides(path)
     is_pptx = path.suffix.lower() == ".pptx"
     prs = Presentation(str(path)) if is_pptx else None
-    results: List[SlideResult] = []
+    results: list[SlideResult] = []
 
     for idx, raw in enumerate(raw_slides, 1):
         cleaned = sanitize(raw)

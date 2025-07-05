@@ -1,6 +1,5 @@
 from __future__ import annotations
 import re
-from typing import List
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
@@ -61,7 +60,7 @@ async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
     return "ERROR", raw
 
 # 「。」で区切る。
-def split_sentences(text: str) -> List[str]: 
+def split_sentences(text: str) -> list[str]: 
     return [s.strip() for s in re.split(r'(?<=。)', text) if s.strip()]
 
 # SUPPORTED な文のみ抽出
@@ -69,7 +68,7 @@ async def extract_correct_sentences(
     paragraph: str,
     model: str,
     topic_hint: str | None = None, 
-) -> List[str]:
+) -> list[str]:
     corrects = []
     for sent in split_sentences(paragraph):
         query = f"{topic_hint}: {sent}" if topic_hint else sent
