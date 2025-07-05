@@ -20,7 +20,7 @@ client = AsyncOpenAI()
 
 _cache: dict[str, list[dict[str, str]]] = {}
 if CACHE_DB.exists():
-    _cache = json.loads(CACHE_DB.read_text())
+    _cache = cast(dict[str, list[dict[str, str]]],json.loads(CACHE_DB.read_text()))
 
 def _key(q: str) -> str:
     return hashlib.sha256(q.encode()).hexdigest()
@@ -31,7 +31,7 @@ def save_cache() -> None:
 async def google_search(query: str, num: int = 5) -> list[Dict[str, str]]:
     k = _key(query)
     if k in _cache:
-        return cast(list[dict[str, str]], _cache[k]) 
+        return _cache[k]
 
     url = "https://www.googleapis.com/customsearch/v1"
     params: dict[str, str] = {
