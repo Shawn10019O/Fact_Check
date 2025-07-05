@@ -1,13 +1,10 @@
 from __future__ import annotations
 import re
-from dataclasses import dataclass, asdict ,field
 from pathlib import Path
 from typing import List
 # 3rd‑party parsing libs
 from pptx import Presentation
 import PyPDF2
-import re
-from typing import List
 
 
 # ファイルからスライドまたはページのテキストを抽出

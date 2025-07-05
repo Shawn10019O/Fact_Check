@@ -9,7 +9,8 @@ def _dummy_pptx() -> Path:
     slide.shapes.title.text = "タイトル"
     slide.shapes.placeholders[1].text = "猫が好き。"
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pptx")
-    prs.save(tmp.name); return Path(tmp.name)
+    prs.save(tmp.name)
+    return Path(tmp.name)
 
 @pytest.mark.asyncio
 async def test_process_e2e():

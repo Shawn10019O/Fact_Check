@@ -2,8 +2,6 @@ from __future__ import annotations
 import re
 from typing import List
 from openai import AsyncOpenAI
-import re
-from typing import List
 from dotenv import load_dotenv
 
 load_dotenv() 

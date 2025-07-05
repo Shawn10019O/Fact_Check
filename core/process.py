@@ -2,7 +2,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 from pptx import Presentation
-from typing import List
 from core.models import SlideResult
 from core.slides import extract_slides , sanitize, get_topic_hint
 from core.llm import bullets_to_paragraph, get_verdict,extract_correct_sentences
