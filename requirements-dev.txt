@@ -1,7 +1,8 @@
-pytest>=8
-pytest-asyncio>=0.23
-pytest-mock>=3.14
-pytest-regressions>=2
-ruff>=0.4
-mypy>=1.10
-coverage>=7
+pytest
+pytest-asyncio
+pytest-mock
+ruff
+pytest-regressions
+mypy
+coverage
+pytest-cov
