@@ -10,6 +10,7 @@ import re
 from typing import List
 
 
+# ファイルからスライドまたはページのテキストを抽出
 def extract_slides(path: Path) -> List[str]:
     """Return list[str] where index == slide number‑1."""
     ext = path.suffix.lower()
@@ -40,16 +41,15 @@ def _extract_pdf(path: Path) -> List[str]:
         out.append(txt)
     return out
 
-
+# テキスト前処理: 空行・改行の正規化
 def sanitize(text: str) -> str:
-    # CRLF -> LF に正規化
     text = text.replace("\r\n", "\n").replace("\r", "\n")
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n{2,}", "\n", text)
     text = text.replace("\n", "。")
     return text.strip("。 ")
 
-
+# スライドの主題を1語で取得
 def get_topic_hint(raw_slide: str, is_pptx: bool, slide_obj=None) -> str | None:
     if is_pptx and slide_obj and getattr(slide_obj.shapes, "title", None):
         return slide_obj.shapes.title.text.strip()

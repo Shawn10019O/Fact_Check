@@ -10,6 +10,8 @@ load_dotenv()
 
 client = AsyncOpenAI()
 
+# LLM を使った変換・判定処理
+
 BULLET_SYS_MSG = {
     "role": "system",
     "content": (
@@ -38,7 +40,7 @@ VERDICT_SYS_MSG = {
 }
 
 
-
+# 文章にまとめる
 async def bullets_to_paragraph(text: str, model: str) -> str:
     rsp = await client.chat.completions.create(
         model=model,
@@ -47,7 +49,7 @@ async def bullets_to_paragraph(text: str, model: str) -> str:
     )
     return rsp.choices[0].message.content.strip()
 
-
+# 事実判定を実行
 async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
     rsp = await client.chat.completions.create(
         model=model,
@@ -60,21 +62,20 @@ async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
         return label.strip().upper(), reason.strip()
     return "ERROR", raw
 
-
+# 「。」で区切る。
 def split_sentences(text: str) -> List[str]: 
-    # 「。」で区切る。空行・空白を除外
     return [s.strip() for s in re.split(r'(?<=。)', text) if s.strip()]
 
+# SUPPORTED な文のみ抽出
 async def extract_correct_sentences(
     paragraph: str,
     model: str,
-    topic_hint: str | None = None,   # ← スライドタイトルや冒頭文を渡す
+    topic_hint: str | None = None, 
 ) -> List[str]:
     corrects = []
     for sent in split_sentences(paragraph):
-        # コンテキストを前置（GPT‐4 などは 1 文でも理解しやすくなる）
         query = f"{topic_hint}: {sent}" if topic_hint else sent
         label, _ = await get_verdict(query, model)
         if label == "SUPPORTED":
-            corrects.append(sent)      # ← 返すのは元の文だけ
+            corrects.append(sent)     
     return corrects

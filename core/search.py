@@ -15,7 +15,6 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 CUSTOM_SEARCH_ENGINE_ID = os.getenv("CUSTOM_SEARCH_ENGINE_ID")
 CACHE_DB = Path(".gsearch_cache.json")
-# One async client is reused for all calls.
 client = AsyncOpenAI()
 
 _cache = {}
@@ -28,7 +27,6 @@ def _key(q):
 def save_cache():
     CACHE_DB.write_text(json.dumps(_cache, ensure_ascii=False, indent=2))
 
-# --------------- 非同期検索 ---------------
 async def google_search(query: str, num: int = 5) -> list[dict]:
     k = _key(query)
     if k in _cache:
@@ -45,14 +43,13 @@ async def google_search(query: str, num: int = 5) -> list[dict]:
         
 async def fetch_and_filter_snippets(claim: str, k: int = 5) -> list[dict]:
     items = await google_search(claim)
-    # --- snippet を粗フィルタ
     snippets = [
         {"url": it["link"], "snippet": it["snippet"]}
         for it in items
         if len(it.get("snippet", "")) > 50
     ][:k]
 
-    # --- Embedding 類似度でスコアリング
+    # Embedding 類似度でスコアリング
     inputs = [claim] + [s["snippet"] for s in snippets]
     embs = await client.embeddings.create(input=inputs, model="text-embedding-3-small")
     c_emb = np.array(embs.data[0].embedding)

@@ -15,7 +15,6 @@ async def process_file(path: Path, llm_model: str) -> List[SlideResult]:
     prs = Presentation(path) if is_pptx else None
     results: List[SlideResult] = []
 
-    # Sequential processing keeps it simple; can be parallelised later.
     for idx, raw in enumerate(raw_slides, 1):
         cleaned = sanitize(raw)
         if not cleaned:
@@ -26,9 +25,8 @@ async def process_file(path: Path, llm_model: str) -> List[SlideResult]:
 
         hint = get_topic_hint(paragraph, is_pptx, prs.slides[idx-1] if is_pptx else None)
 
-        # ④ “SUPPORTED 文” を抽出（軽量モデル）
         supported_sents = await extract_correct_sentences(
-            paragraph,          # or cleaned
+            paragraph,        
             model="gpt-4o", 
             topic_hint=hint
         )

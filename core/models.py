@@ -5,16 +5,15 @@ import json
 @dataclass
 class SuspiciousClaim:
     text: str
-    evidence_urls: List[str] = field(default_factory=list)
-
+    
 @dataclass
 class SlideResult:
     slide_no: int
     raw_text: str
     cleaned_text: str
-    verdict: str          
+    verdict: str          # SUPPORTED / REFUTED / NOT_SURE / ERROR
     rationale: str
-    suspicious_claims: List[SuspiciousClaim] = field(default_factory=list)
+    suspicious_claims: list[SuspiciousClaim] = field(default_factory=list)
 
 
 def results_to_markdown(results: List[SlideResult]) -> str:
@@ -36,5 +35,5 @@ def results_to_markdown(results: List[SlideResult]) -> str:
         else:
             lines.append(":white_check_mark: 追加で疑わしい文はありません")
 
-        lines.append("")  # 空行で区切る
+        lines.append("")  
     return "\n".join(lines)
