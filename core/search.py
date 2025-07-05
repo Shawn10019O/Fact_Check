@@ -43,11 +43,11 @@ async def google_search(query: str, num: int = 5) -> list[Dict[str, str]]:
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as sess:
         async with sess.get(url, params=params) as resp:
             data = await resp.json()
-            items = data.get("items", [])
+            items: list[dict[str, str]] = data.get("items", [])
             _cache[k] = items
             return items
         
-async def fetch_and_filter_snippets(claim: str, k: int = 5) -> list[Dict[str, str]]:
+async def fetch_and_filter_snippets(claim: str, k: int = 5) -> list[dict[str, str]]:
     items = await google_search(claim)
     snippets = [
         {"url": it["link"], "snippet": it["snippet"]}

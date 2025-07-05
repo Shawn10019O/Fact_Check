@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
+from typing import Any
 
 load_dotenv() 
 
@@ -39,21 +40,39 @@ VERDICT_SYS_MSG = {
 
 # 文章にまとめる
 async def bullets_to_paragraph(text: str, model: str) -> str:
-    rsp = await client.chat.completions.create(
-        model=model,
-        temperature=0,
-        messages=[BULLET_SYS_MSG, {"role": "user", "content": text}],# type: ignore[arg-type]
-    )
-    return rsp.choices[0].message.content.strip()
+    msgs: list[Any] = [
+        BULLET_SYS_MSG,
+        {"role": "user", "content": text},
+    ]
 
-# 事実判定を実行
-async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
     rsp = await client.chat.completions.create(
         model=model,
         temperature=0,
-        messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}],# type: ignore[arg-type]
+        messages=msgs,
     )
-    raw = rsp.choices[0].message.content.strip()
+
+    raw_msg: str | None = rsp.choices[0].message.content
+    return "" if raw_msg is None else raw_msg.strip()
+
+
+# 段落の真偽判定を取得
+async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
+    msgs: list[Any] = [
+        VERDICT_SYS_MSG,
+        {"role": "user", "content": paragraph},
+    ]
+
+    rsp = await client.chat.completions.create(
+        model=model,
+        temperature=0,
+        messages=msgs,
+    )
+
+    raw_msg: str | None = rsp.choices[0].message.content
+    if raw_msg is None:
+        return "ERROR", ""
+
+    raw = raw_msg.strip()
     if ":" in raw:
         label, reason = raw.split(":", 1)
         return label.strip().upper(), reason.strip()
