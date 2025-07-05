@@ -61,7 +61,7 @@ async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
         rsp = await client.chat.completions.create(
             model=model,
             temperature=0,
-            messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}],  # type: ignore[arg-type]
+            messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}],  # type: ignore[arg-type,list-item]
         )
         raw_msg = rsp.choices[0].message.content or ""
     except Exception:
