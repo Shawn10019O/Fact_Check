@@ -57,27 +57,19 @@ async def bullets_to_paragraph(text: str, model: str) -> str:
 
 # 段落の真偽判定を取得
 async def get_verdict(paragraph: str, model: str) -> tuple[str, str]:
-    msgs: list[Any] = [
-        VERDICT_SYS_MSG,
-        {"role": "user", "content": paragraph},
-    ]
-
-    
-    rsp = await client.chat.completions.create(
-        model=model,
-        temperature=0,
-        messages=msgs,
-    )
-
-    raw_msg: str | None = rsp.choices[0].message.content
-    if raw_msg is None:
+    try:
+        rsp = await client.chat.completions.create(
+            model=model,
+            temperature=0,
+            messages=[VERDICT_SYS_MSG, {"role": "user", "content": paragraph}],  # type: ignore[arg-type]
+        )
+        raw_msg = rsp.choices[0].message.content or ""
+    except Exception:
         return "ERROR", ""
-
-    raw = raw_msg.strip()
-    if ":" in raw:
-        label, reason = raw.split(":", 1)
+    if ":" in raw_msg:
+        label, reason = raw_msg.split(":", 1)
         return label.strip().upper(), reason.strip()
-    return "ERROR", raw
+    return "ERROR", raw_msg.strip()
 
 # 「。」で区切る。
 def split_sentences(text: str) -> list[str]: 

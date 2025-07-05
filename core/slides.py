@@ -44,7 +44,10 @@ def sanitize(text: str) -> str:
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n{2,}", "\n", text)
     text = text.replace("\n", "。")
+    # 句点の前に入った余計な半角スペースを除去
+    text = re.sub(r" +。", "。", text)
     return text.strip("。 ")
+
 
 # スライドの主題を1語で取得
 def get_topic_hint(raw_slide: str, is_pptx: bool, slide_obj: Any | None = None) -> Optional[str]:
