@@ -1,4 +1,5 @@
-import pytest, tempfile
+import pytest
+import tempfile
 from pathlib import Path
 from pptx import Presentation
 from core.process import process_file
